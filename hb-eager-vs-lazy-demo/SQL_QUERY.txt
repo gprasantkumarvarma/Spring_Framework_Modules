@@ -1,0 +1,132 @@
+======MYSQL=========
+
+CREATE TABLE INSTRUCTOR_DETAIL(
+ID INT(11) NOT NULL auto_increment,
+YOUTUBE_CHANNEL varchar(128) default NULL,
+HOBBY VARCHAR(45) DEFAULT NULL,
+PRIMARY KEY (ID)
+);
+
+
+
+
+set foreign_key_checks=1;
+
+CREATE TABLE INSTRUCTOR(
+ID INT(11) NOT NULL auto_increment,
+FIRST_NAME varchar(45) default NULL,
+LAST_NAME VARCHAR(45) DEFAULT NULL,
+EMAIL VARCHAR(45) DEFAULT NULL,
+INSTRUCTOR_DETAIL_ID INT(11) DEFAULT NULL,
+PRIMARY KEY (ID),
+KEY FK_DETAIL_idx (INSTRUCTOR_DETAIL_ID),
+CONSTRAINT FK_DETAIL FOREIGN KEY (INSTRUCTOR_DETAIL_ID)
+REFERENCES INSTRUCTOR_DETAIL (ID)
+ON DELETE NO ACTION ON UPDATE NO ACTION
+)ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT cHARSET=latin1;
+
+
+
+
+=====ORACLE========
+
+
+CREATE TABLE INSTRUCTOR_DETAIL(
+ID NUMBER(11,0) NOT NULL,
+YOUTUBE_CHANNEL VARCHAR2(200 CHAR) default NULL,
+HOBBY VARCHAR2(200 CHAR) DEFAULT NULL,
+PRIMARY KEY (ID)
+);
+
+CREATE TABLE INSTRUCTOR(
+ID NUMBER(11,0) NOT NULL ,
+FIRST_NAME VARCHAR2(200 CHAR)  default NULL,
+LAST_NAME VARCHAR2(200 CHAR)  DEFAULT NULL,
+EMAIL VARCHAR2(200 CHAR)  DEFAULT NULL,
+INSTRUCTOR_DETAIL_ID NUMBER(11,0) DEFAULT NULL,
+PRIMARY KEY (ID)
+)
+
+--Constraints
+
+ALTER TABLE INSTRUCTOR ADD  CONSTRAINT FK_DETAIL_idx
+  FOREIGN KEY (INSTRUCTOR_DETAIL_ID)
+  REFERENCES INSTRUCTOR_DETAIL (ID);
+
+--Sequences
+CREATE SEQUENCE  "INSTRUCTOR_DETAIL_ID_SEQ"  MINVALUE 1 MAXVALUE 999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE ;
+
+--Trigger  
+  
+   CREATE OR REPLACE TRIGGER "INSTRUCTOR_DETAIL_ID_TRG" BEFORE INSERT ON INSTRUCTOR_DETAIL
+FOR EACH ROW
+DECLARE 
+v_newVal NUMBER(12) := 0;
+v_incval NUMBER(12) := 0;
+BEGIN
+  IF INSERTING AND :new.Id IS NULL THEN
+    SELECT  INSTRUCTOR_DETAIL_ID_SEQ.NEXTVAL INTO v_newVal FROM DUAL;
+    -- If this is the first time this table have been inserted into (sequence == 1)
+    IF v_newVal = 1 THEN 
+      --get the max indentity value from the table
+      SELECT NVL(max(Id),0) INTO v_newVal FROM INSTRUCTOR_DETAIL;
+      v_newVal := v_newVal + 1;
+      --set the sequence to that value
+      LOOP
+           EXIT WHEN v_incval>=v_newVal;
+           SELECT INSTRUCTOR_DETAIL_ID_SEQ.nextval INTO v_incval FROM dual;
+      END LOOP;
+    END IF;
+    --used to emulate LAST_INSERT_ID()
+    --mysql_utilities.identity := v_newVal; 
+   -- assign the value from the sequence to emulate the identity column
+   :new.Id := v_newVal;
+  END IF;
+END;
+/
+ALTER TRIGGER "INSTRUCTOR_DETAIL_ID_TRG" ENABLE;
+
+
+
+--Sequences
+CREATE SEQUENCE  "INSTRUCTOR_ID_SEQ"  MINVALUE 1 MAXVALUE 999999999999999999999999 INCREMENT BY 1 START WITH 1 CACHE 20 NOORDER  NOCYCLE ;
+
+--Trigger  
+  
+   CREATE OR REPLACE TRIGGER "INSTRUCTOR_ID_TRG" BEFORE INSERT ON INSTRUCTOR
+FOR EACH ROW
+DECLARE 
+v_newVal NUMBER(12) := 0;
+v_incval NUMBER(12) := 0;
+BEGIN
+  IF INSERTING AND :new.Id IS NULL THEN
+    SELECT  INSTRUCTOR_ID_SEQ.NEXTVAL INTO v_newVal FROM DUAL;
+    -- If this is the first time this table have been inserted into (sequence == 1)
+    IF v_newVal = 1 THEN 
+      --get the max indentity value from the table
+      SELECT NVL(max(Id),0) INTO v_newVal FROM INSTRUCTOR;
+      v_newVal := v_newVal + 1;
+      --set the sequence to that value
+      LOOP
+           EXIT WHEN v_incval>=v_newVal;
+           SELECT INSTRUCTOR_ID_SEQ.nextval INTO v_incval FROM dual;
+      END LOOP;
+    END IF;
+    --used to emulate LAST_INSERT_ID()
+    --mysql_utilities.identity := v_newVal; 
+   -- assign the value from the sequence to emulate the identity column
+   :new.Id := v_newVal;
+  END IF;
+END;
+/
+ALTER TRIGGER "INSTRUCTOR_ID_TRG" ENABLE;
+
+
+
+
+
+
+
+
+
+

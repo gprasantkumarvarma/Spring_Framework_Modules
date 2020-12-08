@@ -1,0 +1,14 @@
+spring:
+  data:
+    mongodb:
+      uri: ${MONGO_URI:mongodb://mongo/keepnote}
+  application:
+    name: note-service
+eureka:
+  client:
+    fetechRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+server:
+  port: 8082

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- load the property file: sport.properties -->
+	<context:property-placeholder
+		location="classpath:sport.properties" />
+
+	<!-- Define your beans here -->
+	<bean id="myFortuneService"
+		class="com.java.springdemo.HappyFortuneService">
+	</bean>
+
+	<bean id="myCoach" class="com.java.springdemo.BaseballCoach">
+		<constructor-arg ref="myFortuneService"></constructor-arg>
+	</bean>
+
+
+	<bean id="myCricketCoach" class="com.java.springdemo.CricketCoach">
+		<!-- set up setter injection -->
+		<property name="fortuneservice" ref="myFortuneService" />
+
+		<!-- set up setter injection literal value directly -->
+
+		<!-- <property name="emailAddess" value="g.prashantverma@gmail.com"/> <property 
+			name="team" value="Royal Challengers Bangalore"/> -->
+
+		<!-- set up setter injection from properties files -->
+
+		<property name="emailAddess" value="${foo.email}" />
+		<property name="team" value="${foo.team}" />
+
+	</bean>
+	
+	<!-- injection my fortune object to my cricket coach object -->
+	
+		<bean id="myNewFortuneService"
+	      class="com.java.springdemo.MyNewFortuneService">
+	      </bean>
+	
+	
+	<bean id="mynewCricketCoach"
+	      class="com.java.springdemo.MYNewCricketCoach">
+	      <property name="myfortuneservice" ref="myNewFortuneService"></property>
+	      
+	      </bean>
+</beans>
+
+
+
+
+
